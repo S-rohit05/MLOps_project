@@ -1,26 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Churn Predictor AI</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 400px; }
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.5rem; color: #34495e; font-weight: 600; }
-        input, select { width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 1rem; background-color: #3498db; color: white; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background 0.3s; margin-top: 1rem; }
-        button:hover { background-color: #2980b9; }
-        #result { margin-top: 1.5rem; padding: 1rem; border-radius: 6px; text-align: center; font-weight: bold; display: none; }
-        .churn { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
-        .safe { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-        .links { margin-top: 20px; text-align: center; font-size: 0.9em; }
-        .links a { color: #555; text-decoration: none; margin: 0 10px; }
-        .links a:hover { text-decoration: underline; color: #000; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #34495e;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .churn {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .safe {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .links a {
+            color: #555;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+            color: #000;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🔮 Churn Predictor</h1>
@@ -66,9 +152,9 @@
             <button type="submit">Predict Churn Risk</button>
         </form>
         <div id="result"></div>
-        
+
         <div class="links">
-            <a href="/docs" target="_blank">API Docs</a> | 
+            <a href="/docs" target="_blank">API Docs</a> |
             <a href="/monitoring" target="_blank">Drift Report</a>
         </div>
     </div>
@@ -78,7 +164,7 @@
             e.preventDefault();
             const btn = e.target.querySelector('button');
             const resultDiv = document.getElementById('result');
-            
+
             btn.textContent = 'Analyzing...';
             btn.disabled = true;
             resultDiv.style.display = 'none';
@@ -100,11 +186,12 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                
+
                 const res = await response.json();
-                
+
                 resultDiv.style.display = 'block';
-                if (res.churn_prediction === 1) {
+                // Fix: Match the API key 'prediction'
+                if (res.prediction === 1) {
                     resultDiv.textContent = '⚠️ High Risk: Customer likely to Churn';
                     resultDiv.className = 'churn';
                 } else {
@@ -121,4 +208,5 @@
         });
     </script>
 </body>
+
 </html>
