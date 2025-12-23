@@ -1,11 +1,18 @@
 import os
 
-# usage: running this will replace the absolute Windows paths in meta.yaml files
-# with the internal docker path '/mlruns'
+# usage: running this will replace the artifact locations in meta.yaml files
+# with the valid current absolute path to mlruns_xgboost
 
 ROOT_DIR = "mlruns_xgboost"
-SEARCH_STRING = "file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost"
-REPLACE_STRING = "file:///mlruns"
+
+# Get current absolute path formatted as file URI
+# e.g. file:///C:/Users/.../mlruns_xgboost or file:///home/runner/.../mlruns_xgboost
+current_path = os.path.abspath(ROOT_DIR).replace("\\", "/")
+if not current_path.startswith("/"):
+    current_path = "/" + current_path
+NEW_URI = f"file://{current_path}"
+
+print(f"Updating MLflow metadata to: {NEW_URI}")
 
 count = 0
 for root, dirs, files in os.walk(ROOT_DIR):
@@ -13,18 +20,21 @@ for root, dirs, files in os.walk(ROOT_DIR):
         if file == "meta.yaml":
             file_path = os.path.join(root, file)
             with open(file_path, "r") as f:
-                content = f.read()
+                lines = f.readlines()
             
-            if SEARCH_STRING in content:
-                new_content = content.replace(SEARCH_STRING, REPLACE_STRING)
+            modified = False
+            new_lines = []
+            for line in lines:
+                if "artifact_location: " in line:
+                    # Replace the entire value after key
+                    new_lines.append(f"artifact_location: {NEW_URI}\n")
+                    modified = True
+                else:
+                    new_lines.append(line)
+            
+            if modified:
                 with open(file_path, "w") as f:
-                    f.write(new_content)
-                print(f"Updated {file_path}")
+                    f.writelines(new_lines)
                 count += 1
-            else:
-                # Also try matching standard windows path without file:/// prefix just in case
-                # or different casing.
-                # Actually, let's just use a more generic replace for current dir
-                pass
 
 print(f"Fixed {count} meta.yaml files.")
