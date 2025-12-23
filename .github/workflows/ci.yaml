@@ -42,8 +42,8 @@ jobs:
         # 1. Generate Data (Simulates Data Ingestion)
         python src/components/data_ingestion.py
         
-        # 2. Fix MLflow Paths (Ensure valid URI)
-        python fix_mlflow_paths.py
+        # 2. Reset MLflow Experiments (Avoid Path Conflicts)
+        python -c "import shutil; shutil.rmtree('mlruns_xgboost', ignore_errors=True)"
 
         # 3. Train Model
         python src/components/model_trainer.py
