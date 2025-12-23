@@ -12,13 +12,17 @@ from dataclasses import dataclass
 import sys
 
 # Basic logging setup
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 @dataclass
 class ModelTrainerConfig:
     train_data_path: str = os.path.join("data", "train.csv")
     test_data_path: str = os.path.join("data", "test.csv")
     model_path: str = os.path.join("model", "model.joblib")
+
 
 class ModelTrainer:
     def __init__(self):
@@ -39,45 +43,59 @@ class ModelTrainer:
             test_df = pd.read_csv(self.config.test_data_path)
 
             logging.info("Splitting training and testing input data")
-            X_train = train_df.drop(columns=['churn'])
-            y_train = train_df['churn']
-            X_test = test_df.drop(columns=['churn'])
-            y_test = test_df['churn']
+            X_train = train_df.drop(columns=["churn"])
+            y_train = train_df["churn"]
+            X_test = test_df.drop(columns=["churn"])
+            y_test = test_df["churn"]
 
             # Create a pipeline with scaling and model
-            pipeline = Pipeline([
-                ('scaler', StandardScaler()),
-                ('model', XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42, use_label_encoder=False, eval_metric='logloss'))
-            ])
+            pipeline = Pipeline(
+                [
+                    ("scaler", StandardScaler()),
+                    (
+                        "model",
+                        XGBClassifier(
+                            n_estimators=100,
+                            learning_rate=0.1,
+                            max_depth=5,
+                            random_state=42,
+                            use_label_encoder=False,
+                            eval_metric="logloss",
+                        ),
+                    ),
+                ]
+            )
 
             logging.info("Starting model training")
-            
+
             # MLflow tracking
             mlflow.set_tracking_uri("file:./mlruns_xgboost")
             mlflow.set_experiment("CustomerChurnPrediction")
-            
+
             with mlflow.start_run():
                 pipeline.fit(X_train, y_train)
-                
+
                 predicted = pipeline.predict(X_test)
-                
+
                 accuracy, precision, recall, f1 = self.eval_metrics(y_test, predicted)
-                
-                logging.info(f"Model Metrics: Accuracy={accuracy}, Precision={precision}, Recall={recall}, F1={f1}")
+
+                logging.info(
+                    f"Model Metrics: Accuracy={accuracy}, Precision={precision}, Recall={recall}, F1={f1}"
+                )
 
                 # Log metrics
                 mlflow.log_metric("accuracy", accuracy)
                 mlflow.log_metric("precision", precision)
                 mlflow.log_metric("recall", recall)
                 mlflow.log_metric("f1", f1)
-                
+
                 # Log params (example)
                 mlflow.log_param("n_estimators", 100)
                 mlflow.log_param("learning_rate", 0.1)
-                
+
                 # Log model
                 mlflow.sklearn.log_model(pipeline, "model")
-                
+
                 # Save model locally
                 joblib.dump(pipeline, self.config.model_path)
                 logging.info(f"Model saved to {self.config.model_path}")
@@ -85,6 +103,7 @@ class ModelTrainer:
         except Exception as e:
             logging.error(f"Error in model training: {str(e)}")
             raise e
+
 
 if __name__ == "__main__":
     trainer = ModelTrainer()
