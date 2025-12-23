@@ -1,0 +1,14 @@
+artifact_uri: file:///mlruns/695521025052029989/fd25c0c3ef67469295a74db63bc49de6/artifacts
+end_time: 1766507501444
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: fd25c0c3ef67469295a74db63bc49de6
+run_name: defiant-auk-903
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766507496997
+status: 3
+tags: []
+user_id: sanap

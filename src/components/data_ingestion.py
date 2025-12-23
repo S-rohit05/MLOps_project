@@ -38,19 +38,19 @@ class DataIngestion:
             }
             df = pd.DataFrame(data)
 
-            # Create correlated labels (Stronger Rules for Demo >90% Acc)
-            # Rule: Age > 45 OR (Balance < 50k AND Active=0) -> Churn
-            # This creates a very learnable boundary
+            # Create correlated labels (Imbalanced: Low Churn ~10-15%)
+            # Rule: Age > 60 OR (Balance < 10k AND Active=0) -> Churn
+            # This makes Churn the minority class (Imbalanced)
             
             df['churn'] = 0
             
-            # Deterministic Rules
-            mask_high_risk = (df['age'] > 45) | ((df['balance'] < 50000) & (df['active_member'] == 0))
+            # Deterministic Rules (Stricter)
+            mask_high_risk = (df['age'] > 60) | ((df['balance'] < 10000) & (df['active_member'] == 0))
             df.loc[mask_high_risk, 'churn'] = 1
             
-            # Add small noise (flip 5% of labels to make it look realistic, not 100%)
-            # If we want >90%, we keep noise low.
-            flip_indices = np.random.choice(df.index, size=int(0.05 * len(df)), replace=False)
+            # Add small noise (flip 2% of labels)
+            # Keeping noise low to maintain learnability but adding realism
+            flip_indices = np.random.choice(df.index, size=int(0.02 * len(df)), replace=False)
             df.loc[flip_indices, 'churn'] = 1 - df.loc[flip_indices, 'churn']
             
             # Drop the helper col if it exists (it doesn't in this new logic)
