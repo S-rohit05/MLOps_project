@@ -8,3 +8,6 @@ uvicorn
 pytest
 pyyaml
 python-dotenv
+xgboost
+evidently
+scipy

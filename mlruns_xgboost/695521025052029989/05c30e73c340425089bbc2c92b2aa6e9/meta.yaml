@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost/695521025052029989/05c30e73c340425089bbc2c92b2aa6e9/artifacts
+end_time: 1766480860963
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: 05c30e73c340425089bbc2c92b2aa6e9
+run_name: nervous-cow-179
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766480847497
+status: 3
+tags: []
+user_id: sanap

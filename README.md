@@ -59,7 +59,7 @@ To run the project on your PC:
 
 3. **Run MLflow UI** (in another terminal)
    ```powershell
-   mlflow ui
+   python -m mlflow ui
    ```
    Open http://localhost:5000 to view experiments.
 

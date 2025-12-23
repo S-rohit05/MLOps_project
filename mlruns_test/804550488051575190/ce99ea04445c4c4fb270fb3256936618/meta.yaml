@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_test/804550488051575190/ce99ea04445c4c4fb270fb3256936618/artifacts
+end_time: 1766480802561
+entry_point_name: ''
+experiment_id: '804550488051575190'
+lifecycle_stage: active
+run_id: ce99ea04445c4c4fb270fb3256936618
+run_name: sedate-cod-681
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766480800216
+status: 4
+tags: []
+user_id: sanap

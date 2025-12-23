@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
@@ -47,12 +47,13 @@ class ModelTrainer:
             # Create a pipeline with scaling and model
             pipeline = Pipeline([
                 ('scaler', StandardScaler()),
-                ('model', RandomForestClassifier(n_estimators=100, random_state=42))
+                ('model', XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=5, random_state=42, use_label_encoder=False, eval_metric='logloss'))
             ])
 
             logging.info("Starting model training")
             
             # MLflow tracking
+            mlflow.set_tracking_uri("file:./mlruns_xgboost")
             mlflow.set_experiment("CustomerChurnPrediction")
             
             with mlflow.start_run():
@@ -72,6 +73,7 @@ class ModelTrainer:
                 
                 # Log params (example)
                 mlflow.log_param("n_estimators", 100)
+                mlflow.log_param("learning_rate", 0.1)
                 
                 # Log model
                 mlflow.sklearn.log_model(pipeline, "model")

@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost/695521025052029989/ec00364a11ab4c6cbfb935723d0cd24f/artifacts
+end_time: 1766485929111
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: ec00364a11ab4c6cbfb935723d0cd24f
+run_name: illustrious-rook-461
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766485919180
+status: 3
+tags: []
+user_id: sanap

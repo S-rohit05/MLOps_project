@@ -1,0 +1,10 @@
+artifact_location: file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost/695521025052029989/models/m-fe2215104e864e11a466abe3b938ac9d/artifacts
+creation_timestamp: 1766480934383
+experiment_id: '695521025052029989'
+last_updated_timestamp: 1766480939534
+model_id: m-fe2215104e864e11a466abe3b938ac9d
+model_type: null
+name: model
+source_run_id: e55842c0972f405ea767d47e5fcf154a
+status: 2
+status_message: null

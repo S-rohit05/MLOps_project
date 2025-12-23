@@ -1,0 +1,22 @@
+artifact_path: file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost/695521025052029989/models/m-fe2215104e864e11a466abe3b938ac9d/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.10
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+mlflow_version: 3.8.0
+model_id: m-fe2215104e864e11a466abe3b938ac9d
+model_size_bytes: 208501
+model_uuid: m-fe2215104e864e11a466abe3b938ac9d
+prompts: null
+run_id: e55842c0972f405ea767d47e5fcf154a
+utc_time_created: '2025-12-23 09:08:54.468027'

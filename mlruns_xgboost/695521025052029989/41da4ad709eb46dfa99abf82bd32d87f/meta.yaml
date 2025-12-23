@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost/695521025052029989/41da4ad709eb46dfa99abf82bd32d87f/artifacts
+end_time: 1766480823774
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: 41da4ad709eb46dfa99abf82bd32d87f
+run_name: hilarious-grub-32
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766480822918
+status: 4
+tags: []
+user_id: sanap

@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_test/804550488051575190/719bac1a3ba144ca982d2bdef407d108/artifacts
+end_time: 1766480782980
+entry_point_name: ''
+experiment_id: '804550488051575190'
+lifecycle_stage: active
+run_id: 719bac1a3ba144ca982d2bdef407d108
+run_name: peaceful-pig-904
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766480779962
+status: 4
+tags: []
+user_id: sanap
