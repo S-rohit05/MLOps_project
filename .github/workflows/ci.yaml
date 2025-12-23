@@ -32,6 +32,9 @@ jobs:
         
     - name: Test with pytest
       run: |
+      env:
+        PYTHONPATH: .
+      run: |
         pytest
         
     - name: Verify Training Pipeline (Integration Test)
