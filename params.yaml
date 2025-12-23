@@ -1,0 +1,6 @@
+base:
+  project: customer_churn
+  random_state: 42
+
+model:
+  n_estimators: 100

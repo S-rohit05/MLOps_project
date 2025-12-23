@@ -1,0 +1,18 @@
+stages:
+  data_ingestion:
+    cmd: python src/components/data_ingestion.py
+    deps:
+      - src/components/data_ingestion.py
+    outs:
+      - data/raw.csv
+      - data/train.csv
+      - data/test.csv
+
+  training:
+    cmd: python src/components/model_trainer.py
+    deps:
+      - src/components/model_trainer.py
+      - data/train.csv
+      - data/test.csv
+    outs:
+      - model/model.joblib
