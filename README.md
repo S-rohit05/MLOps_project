@@ -41,3 +41,25 @@ This project implements a complete Machine Learning pipeline for **Customer Chur
 ## Tools
 - **MLflow**: `mlflow ui` to view experiments.
 - **DVC**: `dvc repro` to run the pipeline.
+
+## Quick Start (Windows)
+
+To run the project on your PC:
+
+1. **Activate Environment**
+   ```powershell
+   .\venv\Scripts\activate
+   ```
+
+2. **Run API** (in one terminal)
+   ```powershell
+   uvicorn main:app --reload
+   ```
+   Open http://localhost:8000/docs to test predictions.
+
+3. **Run MLflow UI** (in another terminal)
+   ```powershell
+   mlflow ui
+   ```
+   Open http://localhost:5000 to view experiments.
+
