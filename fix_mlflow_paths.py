@@ -4,7 +4,7 @@ import os
 # with the internal docker path '/mlruns'
 
 ROOT_DIR = "mlruns_xgboost"
-SEARCH_STRING = "file:///C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost"
+SEARCH_STRING = "file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost"
 REPLACE_STRING = "file:///mlruns"
 
 count = 0

@@ -1,4 +1,4 @@
-artifact_uri: file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost/695521025052029989/ec00364a11ab4c6cbfb935723d0cd24f/artifacts
+artifact_uri: file:///mlruns/695521025052029989/ec00364a11ab4c6cbfb935723d0cd24f/artifacts
 end_time: 1766485929111
 entry_point_name: ''
 experiment_id: '695521025052029989'

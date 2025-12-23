@@ -1,4 +1,4 @@
-artifact_location: file:C:/Users/sanap/.gemini/antigravity/scratch/mlops_project/mlruns_xgboost/695521025052029989/models/m-403d8448a5624204ab93801a2c8b218f/artifacts
+artifact_location: file:///mlruns/695521025052029989/models/m-403d8448a5624204ab93801a2c8b218f/artifacts
 creation_timestamp: 1766480848261
 experiment_id: '695521025052029989'
 last_updated_timestamp: 1766480860926
