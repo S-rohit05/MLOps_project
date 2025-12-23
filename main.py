@@ -37,9 +37,23 @@ def load_model():
     except Exception as e:
         print(f"Error loading model: {e}")
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, HTMLResponse
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
+
 @app.get("/")
 def home():
-    return {"message": "Welcome to the Churn Prediction API. Use /predict to get predictions."}
+    return FileResponse("src/static/index.html")
+
+@app.get("/monitoring", response_class=HTMLResponse)
+def monitoring():
+    report_path = "drift_report.html"
+    if os.path.exists(report_path):
+        with open(report_path, "r", encoding='utf-8') as f:
+            return f.read()
+    return "<h1>Drift Report not found. Run 'src/components/model_monitor.py' first.</h1>"
 
 @app.post("/predict")
 def predict(data: CustomerData):
