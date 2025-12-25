@@ -25,7 +25,8 @@ def test_database_workflow():
         "products_number": 2,
         "credit_card": 1,
         "active_member": 1,
-        "estimated_salary": 50000.0
+        "estimated_salary": 50000.0,
+        "product_price": 500.0
     }
     save_prediction(data, 1, 0.85)
     
