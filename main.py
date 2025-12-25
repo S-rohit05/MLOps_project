@@ -4,6 +4,7 @@ import joblib
 import pandas as pd
 import uvicorn
 import os
+from src.database import init_db, save_prediction, get_recent_predictions
 
 app = FastAPI(
     title="Customer Churn Prediction API",
@@ -28,6 +29,7 @@ class CustomerData(BaseModel):
 @app.on_event("startup")
 def load_model():
     global model
+    init_db()
     try:
         if os.path.exists(MODEL_PATH):
             model = joblib.load(MODEL_PATH)
@@ -70,6 +72,12 @@ def predict(data: CustomerData):
         
         churn_prob = prob[0][1] # Probability of Churn (class 1)
         
+            "label": "Churn" if prediction[0] == 1 else "No Churn"
+        }
+        
+        # Save to database
+        save_prediction(data.dict(), int(prediction[0]), float(churn_prob))
+        
         return {
             "prediction": int(prediction[0]),
             "churn_probability": float(churn_prob),
@@ -77,6 +85,10 @@ def predict(data: CustomerData):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/history")
+def history():
+    return get_recent_predictions()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

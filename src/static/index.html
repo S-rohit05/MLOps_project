@@ -157,6 +157,23 @@
             <a href="/docs" target="_blank">API Docs</a> |
             <a href="/monitoring" target="_blank">Drift Report</a>
         </div>
+
+        <div id="history-container" style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
+            <h3>Recent Predictions</h3>
+            <table id="history-table"
+                style="width: 100%; font-size: 0.9em; text-align: left; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #ddd;">
+                        <th style="padding: 8px;">Time</th>
+                        <th style="padding: 8px;">Prob</th>
+                        <th style="padding: 8px;">Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- History rows will be here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -198,6 +215,9 @@
                     resultDiv.textContent = '✅ Low Risk: Customer likely to Stay';
                     resultDiv.className = 'safe';
                 }
+
+                // Update history
+                fetchHistory();
             } catch (err) {
                 resultDiv.textContent = 'Error: Could not connect to API';
                 resultDiv.style.display = 'block';
@@ -206,6 +226,44 @@
                 btn.disabled = false;
             }
         });
+
+        async function fetchHistory() {
+            try {
+                const res = await fetch('/history'); // Call the new endpoint
+                const history = await res.json();
+
+                const tbody = document.querySelector('#history-table tbody');
+                tbody.innerHTML = ''; // Clear existing rows
+
+                history.forEach(item => {
+                    const tr = document.createElement('tr');
+
+                    // Format timestamp
+                    const dateCtx = new Date(item.timestamp);
+                    const dateStr = dateCtx.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    // Format probability
+                    const prob = (item.churn_probability * 100).toFixed(1) + '%';
+
+                    // Format result
+                    const isChurn = item.prediction === 1;
+                    const resultText = isChurn ? '🔴 Churn' : '🟢 Safe';
+                    const resultStyle = isChurn ? 'color: #c62828; font-weight: bold;' : 'color: #2e7d32; font-weight: bold;';
+
+                    tr.innerHTML = `
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">${dateStr}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">${prob}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee; ${resultStyle}">${resultText}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Error fetching history:", err);
+            }
+        }
+
+        // Fetch history when page loads
+        fetchHistory();
     </script>
 </body>
 
