@@ -73,21 +73,48 @@ class ModelTrainer:
             mlflow.set_experiment("CustomerChurnPrediction")
 
             with mlflow.start_run():
+                # Log tags and sample info
+                mlflow.set_tag("model_type", "xgboost")
+                mlflow.set_tag("stage", "evaluation")
+                
+                num_train = len(y_train)
+                num_test = len(y_test)
+                mlflow.log_param("train_samples", num_train)
+                mlflow.log_param("test_samples", num_test)
+
+                # Log class distributions
+                train_churn_rate = y_train.mean()
+                test_churn_rate = y_test.mean()
+                mlflow.log_param("train_churn_rate", f"{train_churn_rate:.2%}")
+                mlflow.log_param("test_churn_rate", f"{test_churn_rate:.2%}")
+                
+                logging.info(f"Class Distribution: Train Churn={train_churn_rate:.2%}, Test Churn={test_churn_rate:.2%}")
+
                 pipeline.fit(X_train, y_train)
 
-                predicted = pipeline.predict(X_test)
-
-                accuracy, precision, recall, f1 = self.eval_metrics(y_test, predicted)
+                # Train metrics
+                train_predicted = pipeline.predict(X_train)
+                tr_acc, tr_prec, tr_rec, tr_f1 = self.eval_metrics(y_train, train_predicted)
+                
+                # Test metrics
+                test_predicted = pipeline.predict(X_test)
+                accuracy, precision, recall, f1 = self.eval_metrics(y_test, test_predicted)
 
                 logging.info(
-                    f"Model Metrics: Accuracy={accuracy}, Precision={precision}, Recall={recall}, F1={f1}"
+                    f"Test Metrics: Accuracy={accuracy}, Precision={precision}, Recall={recall}, F1={f1}"
                 )
 
-                # Log metrics
-                mlflow.log_metric("accuracy", accuracy)
-                mlflow.log_metric("precision", precision)
-                mlflow.log_metric("recall", recall)
-                mlflow.log_metric("f1", f1)
+                # Log training metrics
+                mlflow.log_metric("train_accuracy", tr_acc)
+                mlflow.log_metric("train_precision", tr_prec)
+                mlflow.log_metric("train_recall", tr_rec)
+                mlflow.log_metric("train_f1", tr_f1)
+
+                # Log test metrics
+                mlflow.log_metric("test_accuracy", accuracy)
+                mlflow.log_metric("test_precision", precision)
+                mlflow.log_metric("test_recall", recall)
+                mlflow.log_metric("test_f1", f1)
 
                 # Log params (example)
                 mlflow.log_param("n_estimators", 100)
