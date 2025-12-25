@@ -25,6 +25,7 @@ class CustomerData(BaseModel):
     credit_card: int
     active_member: int
     estimated_salary: float
+    product_price: float
 
 @app.on_event("startup")
 def load_model():

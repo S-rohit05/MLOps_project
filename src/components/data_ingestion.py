@@ -39,23 +39,30 @@ class DataIngestion:
                 "credit_card": np.random.randint(0, 2, n_samples),
                 "active_member": np.random.randint(0, 2, n_samples),
                 "estimated_salary": np.random.uniform(10000, 150000, n_samples),
+                "product_price": np.random.uniform(10, 5000, n_samples),
             }
             df = pd.DataFrame(data)
 
-            # Create correlated labels (Imbalanced: Low Churn ~10-15%)
-            # Rule: Age > 60 OR (Balance < 10k AND Active=0) -> Churn
-            # This makes Churn the minority class (Imbalanced)
-
+            # Create correlated labels (Churn Logic)
             df["churn"] = 0
 
-            # Deterministic Rules (Stricter)
-            mask_high_risk = (df["age"] > 60) | (
-                (df["balance"] < 10000) & (df["active_member"] == 0)
-            )
-            df.loc[mask_high_risk, "churn"] = 1
+            # 1. Senior Risk (Age > 60)
+            mask_senior = (df["age"] > 60)
+            
+            # 2. Inactive Small Balance Risk
+            mask_inactive = (df["balance"] < 10000) & (df["active_member"] == 0)
+            
+            # 3. New: Affordability Risk (Price vs Monthly Salary)
+            # Monthly Salary = estimated_salary / 12. Risk if price > 30% of monthly income.
+            mask_unaffordable_salary = (df["product_price"] > (df["estimated_salary"] / 12) * 0.3)
+            
+            # 4. New: Affordability Risk (Price vs Balance)
+            # Risk if price > 20% of current balance.
+            mask_unaffordable_balance = (df["product_price"] > df["balance"] * 0.2) & (df["balance"] > 0)
+
+            df.loc[mask_senior | mask_inactive | mask_unaffordable_salary | mask_unaffordable_balance, "churn"] = 1
 
             # Add small noise (flip 2% of labels)
-            # Keeping noise low to maintain learnability but adding realism
             flip_indices = np.random.choice(
                 df.index, size=int(0.02 * len(df)), replace=False
             )
