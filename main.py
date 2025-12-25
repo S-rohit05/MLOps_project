@@ -72,9 +72,6 @@ def predict(data: CustomerData):
         
         churn_prob = prob[0][1] # Probability of Churn (class 1)
         
-            "label": "Churn" if prediction[0] == 1 else "No Churn"
-        }
-        
         # Save to database
         save_prediction(data.dict(), int(prediction[0]), float(churn_prob))
         
