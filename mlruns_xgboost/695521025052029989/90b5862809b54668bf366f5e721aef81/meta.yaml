@@ -1,0 +1,14 @@
+artifact_uri: file:///mlruns/695521025052029989/90b5862809b54668bf366f5e721aef81/artifacts
+end_time: 1766641886078
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: 90b5862809b54668bf366f5e721aef81
+run_name: fearless-mink-382
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766641873933
+status: 3
+tags: []
+user_id: sanap

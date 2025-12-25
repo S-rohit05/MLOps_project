@@ -25,21 +25,21 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         logging.info("Entered the data ingestion method or component")
         try:
-            # Generate synthetic data
+            # Generate synthetic Customer Churn data
             logging.info("Generating synthetic Customer Churn data")
             np.random.seed(42)
-            n_samples = 1000
+            n_samples = 2000  # Increased samples for better coverage
 
             data = {
                 "credit_score": np.random.randint(300, 850, n_samples),
                 "age": np.random.randint(18, 90, n_samples),
                 "tenure": np.random.randint(0, 10, n_samples),
-                "balance": np.random.uniform(0, 250000, n_samples),
+                "balance": np.random.uniform(0, 2500000, n_samples), # Increased max balance to 2.5M
                 "products_number": np.random.randint(1, 5, n_samples),
                 "credit_card": np.random.randint(0, 2, n_samples),
                 "active_member": np.random.randint(0, 2, n_samples),
-                "estimated_salary": np.random.uniform(10000, 150000, n_samples),
-                "product_price": np.random.uniform(10, 5000, n_samples),
+                "estimated_salary": np.random.uniform(10000, 2000000, n_samples), # Increased max salary to 2M
+                "product_price": np.random.uniform(10, 10000, n_samples), # Increased max product price
             }
             df = pd.DataFrame(data)
 
