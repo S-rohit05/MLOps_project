@@ -1,0 +1,14 @@
+artifact_uri: file:///mlruns/695521025052029989/84eddb5e59144252ab51d4acc8736291/artifacts
+end_time: 1766647270913
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: 84eddb5e59144252ab51d4acc8736291
+run_name: fearless-turtle-697
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766647259650
+status: 3
+tags: []
+user_id: sanap

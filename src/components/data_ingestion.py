@@ -43,34 +43,38 @@ class DataIngestion:
             }
             df = pd.DataFrame(data)
 
-            # Create correlated labels (Churn Logic)
-            df["churn"] = 0
-
-            # 1. Senior Risk (Age > 60)
-            mask_senior = (df["age"] > 60)
+            # --- Probabilistic Churn Logic ---
+            # Instead of hard rules, we calculate a "Risk Score" (logits) and convert to probability.
             
-            # 2. Inactive Small Balance Risk
-            mask_inactive = (df["balance"] < 10000) & (df["active_member"] == 0)
+            # Normalize features for risk calculation
+            age_norm = df["age"] / 100.0
+            # Affordability Ratio: Price vs Balance (Capped at 1.0)
+            balance_pressure = (df["product_price"] / (df["balance"] + 1.0)).clip(upper=1.0)
+            # Income Ratio: Price vs Monthly Salary (Capped at 1.0)
+            salary_pressure = (df["product_price"] / ((df["estimated_salary"] / 12) + 1.0)).clip(upper=1.0)
             
-            # 3. New: Affordability Risk (Price vs Monthly Salary)
-            # Monthly Salary = estimated_salary / 12. Risk if price > 30% of monthly income.
-            mask_unaffordable_salary = (df["product_price"] > (df["estimated_salary"] / 12) * 0.3)
+            # Calculate Log-Odds (Logits)
+            # Base risk bias
+            logits = -2.0 
             
-            # 4. New: Affordability Risk (Price vs Balance)
-            # Risk if price > 20% of current balance.
-            mask_unaffordable_balance = (df["product_price"] > df["balance"] * 0.2) & (df["balance"] > 0)
-
-            df.loc[mask_senior | mask_inactive | mask_unaffordable_salary | mask_unaffordable_balance, "churn"] = 1
-
-            # Add small noise (flip 2% of labels)
-            flip_indices = np.random.choice(
-                df.index, size=int(0.02 * len(df)), replace=False
-            )
-            df.loc[flip_indices, "churn"] = 1 - df.loc[flip_indices, "churn"]
-
-            # Drop the helper col if it exists (it doesn't in this new logic)
-            # df = df.drop(columns=['churn_prob'])
-
+            # Risk Increases (+):
+            logits += 3.5 * age_norm          # Older customers = Higher risk
+            logits += 2.0 * balance_pressure  # Low balance relative to price = High risk
+            logits += 1.5 * salary_pressure   # Low salary relative to price = High risk
+            
+            # Risk Decreases (-):
+            logits -= 1.5 * df["active_member"]       # Active members stay
+            logits -= 0.1 * df["tenure"]              # Loyal customers stay
+            logits -= 0.5 * df["credit_card"]         # Credit card creates slight lock-in
+            logits -= 0.5 * (df["products_number"] == 2).astype(int) # 2 products is often stable
+            
+            # Convert Logits to Probability (Sigmoid)
+            churn_prob = 1 / (1 + np.exp(-logits))
+            
+            # Generate Churn Label using Bernoulli Sampling
+            # This allows a "High Risk" user to sometimes stay (Realistic)
+            df["churn"] = np.random.binomial(n=1, p=churn_prob)
+            
             # Save raw data
             os.makedirs(os.path.dirname(self.config.raw_data_path), exist_ok=True)
             df.to_csv(self.config.raw_data_path, index=False)
