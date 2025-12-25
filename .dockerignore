@@ -1,0 +1,11 @@
+venv/
+.pytest_cache/
+mlruns_xgboost/
+mlruns_test/
+predictions.db
+mlflow.db
+*.pyc
+__pycache__/
+test_res.txt
+check_importance.py
+drift_report.html
