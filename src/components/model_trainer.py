@@ -10,6 +10,7 @@ import mlflow.sklearn
 import logging
 from dataclasses import dataclass
 import sys
+import pathlib
 
 # Basic logging setup
 logging.basicConfig(
@@ -50,9 +51,21 @@ class ModelTrainer:
 
             logging.info("Starting model training")
 
-            # MLflow tracking
-            mlflow.set_tracking_uri("file:./mlruns_xgboost")
-            mlflow.set_experiment("CustomerChurnPrediction")
+            # MLflow tracking - SAFE MODE
+            import tempfile
+            tracking_dir = tempfile.mkdtemp()
+            uri = pathlib.Path(tracking_dir).as_uri()
+            mlflow.set_tracking_uri(uri)
+            
+            # Explicitly define artifact location to avoid permission errors
+            exp_name = "CustomerChurn_CI_Fixed"
+            
+            try:
+                mlflow.create_experiment(exp_name, artifact_location=uri)
+            except mlflow.exceptions.MlflowException:
+                pass
+
+            mlflow.set_experiment(exp_name)
 
             with mlflow.start_run():
                 # Log tags and sample info
