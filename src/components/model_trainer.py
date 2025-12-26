@@ -53,9 +53,19 @@ class ModelTrainer:
 
             # MLflow tracking
             uri = pathlib.Path("mlruns_xgboost").resolve().as_uri()
-            logging.info(f"Setting MLflow tracking URI to: {uri}")
             mlflow.set_tracking_uri(uri)
-            mlflow.set_experiment("CustomerChurnPrediction")
+            
+            # Explicitly define artifact location to avoid permission errors
+            exp_name = "CustomerChurnPrediction"
+            artifact_uri = pathlib.Path("mlruns_artifacts").resolve().as_uri()
+            
+            try:
+                mlflow.create_experiment(exp_name, artifact_location=artifact_uri)
+            except mlflow.exceptions.MlflowException:
+                # Experiment may already exist
+                pass
+
+            mlflow.set_experiment(exp_name)
 
             with mlflow.start_run():
                 # Log tags and sample info
