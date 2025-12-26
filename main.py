@@ -105,9 +105,9 @@ def predict(data: CustomerData):
              factors.append("Strong Loyalty Indicators")
 
         return {
-            "prediction": int(prediction[0]),
+            "prediction": int(prediction),
             "churn_probability": float(churn_prob),
-            "label": "Churn" if prediction[0] == 1 else "No Churn",
+            "label": "Churn" if prediction == 1 else "No Churn",
             "factors": factors
         }
     except Exception as e:
