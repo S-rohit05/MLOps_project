@@ -58,6 +58,23 @@ class DataIngestion:
                 # Keep only relevant columns
                 df = df[required_cols]
                 
+                # --- Feature Engineering ---
+                logging.info("Applying feature engineering...")
+                
+                # 1. BalanceSalaryRatio
+                df['balance_salary_ratio'] = df['balance'] / df['estimated_salary']
+                
+                # 2. TenureAgeRatio
+                df['tenure_age_ratio'] = df['tenure'] / df['age']
+                
+                # 3. ProductsPerYear (Avoid division by zero)
+                df['tenure_safe'] = df['tenure'].replace(0, 1)
+                df['products_per_year'] = df['products_number'] / df['tenure_safe']
+                df.drop(columns=['tenure_safe'], inplace=True)
+                
+                # 4. CreditCard Active Interaction
+                df['is_active_cr_card'] = df['active_member'] * df['credit_card']
+
                 logging.info(f"Loaded {len(df)} rows from external dataset.")
 
             else:

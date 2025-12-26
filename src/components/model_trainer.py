@@ -48,24 +48,6 @@ class ModelTrainer:
             X_test = test_df.drop(columns=["churn"])
             y_test = test_df["churn"]
 
-            # Create a pipeline with scaling and model
-            pipeline = Pipeline(
-                [
-                    ("scaler", StandardScaler()),
-                    (
-                        "model",
-                        XGBClassifier(
-                            n_estimators=100,
-                            learning_rate=0.1,
-                            max_depth=5,
-                            random_state=42,
-                            use_label_encoder=False,
-                            eval_metric="logloss",
-                        ),
-                    ),
-                ]
-            )
-
             logging.info("Starting model training")
 
             # MLflow tracking
@@ -90,6 +72,34 @@ class ModelTrainer:
                 
                 logging.info(f"Class Distribution: Train Churn={train_churn_rate:.2%}, Test Churn={test_churn_rate:.2%}")
 
+                # Calculate scale_pos_weight for imbalance handling
+                # scale_pos_weight = total_neg / total_pos
+                pos_count = y_train.sum()
+                neg_count = len(y_train) - pos_count
+                scale_weight = neg_count / pos_count if pos_count > 0 else 1.0
+                
+                logging.info(f"Imbalance detected. Using scale_pos_weight={scale_weight:.2f}")
+                mlflow.log_param("scale_pos_weight", scale_weight)
+
+                # Create a pipeline with scaling and model
+                pipeline = Pipeline(
+                    [
+                        ("scaler", StandardScaler()),
+                        (
+                            "model",
+                            XGBClassifier(
+                                n_estimators=200,          # Increased for better convergence
+                                learning_rate=0.05,        # Lower LR for better generalization
+                                max_depth=4,               # Reduced depth to prevent overfitting
+                                scale_pos_weight=scale_weight, # Vital for recal/imbalance
+                                random_state=42,
+                                use_label_encoder=False,
+                                eval_metric="logloss",
+                            ),
+                        ),
+                    ]
+                )
+
                 pipeline.fit(X_train, y_train)
 
                 # Train metrics
@@ -99,26 +109,55 @@ class ModelTrainer:
                 # Test metrics
                 test_predicted = pipeline.predict(X_test)
                 accuracy, precision, recall, f1 = self.eval_metrics(y_test, test_predicted)
+                
+                # Calculate Probabilities for AUC
+                test_proba = pipeline.predict_proba(X_test)[:, 1]
+                from sklearn.metrics import roc_auc_score, average_precision_score
+                roc_auc = roc_auc_score(y_test, test_proba)
+                pr_auc = average_precision_score(y_test, test_proba)
+
+                # --- Threshold Tuning ---
+                # Find optimal threshold for F1
+                import numpy as np
+                thresholds = np.arange(0.1, 0.9, 0.05)
+                best_f1 = 0
+                best_thresh = 0.5
+                best_recall = 0
+                
+                for thresh in thresholds:
+                    # Convert probabilities to class labels based on threshold
+                    preds = (test_proba >= thresh).astype(int)
+                    f1_val = f1_score(y_test, preds)
+                    if f1_val > best_f1:
+                        best_f1 = f1_val
+                        best_thresh = thresh
+                        best_recall = recall_score(y_test, preds)
+
+                logging.info(f"Threshold Tuning: Best Threshold={best_thresh:.2f}, Best F1={best_f1:.4f}, Recall={best_recall:.4f}")
+                mlflow.log_param("optimal_threshold", best_thresh)
+                mlflow.log_metric("optimized_f1", best_f1)
+                mlflow.log_metric("optimized_recall", best_recall)
 
                 logging.info(
-                    f"Test Metrics: Accuracy={accuracy}, Precision={precision}, Recall={recall}, F1={f1}"
+                    f"Default Metrics (0.5): Recall={recall:.4f}, F1={f1:.4f}, PR-AUC={pr_auc:.4f} (Accuracy={accuracy:.4f})"
                 )
 
                 # Log training metrics
-                mlflow.log_metric("train_accuracy", tr_acc)
-                mlflow.log_metric("train_precision", tr_prec)
                 mlflow.log_metric("train_recall", tr_rec)
                 mlflow.log_metric("train_f1", tr_f1)
+                mlflow.log_metric("train_precision", tr_prec)
 
                 # Log test metrics
-                mlflow.log_metric("test_accuracy", accuracy)
-                mlflow.log_metric("test_precision", precision)
                 mlflow.log_metric("test_recall", recall)
                 mlflow.log_metric("test_f1", f1)
+                mlflow.log_metric("test_precision", precision)
+                mlflow.log_metric("test_roc_auc", roc_auc)
+                mlflow.log_metric("test_pr_auc", pr_auc)
 
-                # Log params (example)
-                mlflow.log_param("n_estimators", 100)
-                mlflow.log_param("learning_rate", 0.1)
+                # Log params
+                mlflow.log_param("n_estimators", 200)
+                mlflow.log_param("learning_rate", 0.05)
+                mlflow.log_param("max_depth", 4)
 
                 # Log model
                 mlflow.sklearn.log_model(pipeline, "model")

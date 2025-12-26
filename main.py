@@ -64,16 +64,27 @@ def predict(data: CustomerData):
     
     try:
         # Convert input to dataframe expected by the pipeline
-        input_df = pd.DataFrame([data.dict()])
+        input_data = data.dict()
+    
+        # Create DataFrame for prediction
+        df = pd.DataFrame([input_data])
+        
+        # --- Feature Engineering (Must match training logic) ---
+        df['balance_salary_ratio'] = df['balance'] / df['estimated_salary']
+        df['tenure_age_ratio'] = df['tenure'] / df['age']
+        
+        # Safe division for products_per_year
+        tenure_safe = df['tenure'].replace(0, 1)
+        df['products_per_year'] = df['products_number'] / tenure_safe
+        
+        df['is_active_cr_card'] = df['active_member'] * df['credit_card']
         
         # Make prediction
-        prediction = model.predict(input_df)
-        prob = model.predict_proba(input_df)
-        
-        churn_prob = prob[0][1] # Probability of Churn (class 1)
+        prediction = model.predict(df)[0]
+        churn_prob = model.predict_proba(df)[0][1]
         
         # Save to database
-        save_prediction(data.dict(), int(prediction[0]), float(churn_prob))
+        save_prediction(data.dict(), int(prediction), float(churn_prob))
         
         return {
             "prediction": int(prediction[0]),

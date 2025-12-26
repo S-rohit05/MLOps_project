@@ -1,0 +1,14 @@
+artifact_uri: file:///mlruns/695521025052029989/bd154f79dd3846a8b4e2cc0917341e80/artifacts
+end_time: 1766731698194
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: bd154f79dd3846a8b4e2cc0917341e80
+run_name: serious-wren-211
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766731690747
+status: 3
+tags: []
+user_id: sanap
