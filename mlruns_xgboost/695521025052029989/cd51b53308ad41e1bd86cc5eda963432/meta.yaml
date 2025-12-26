@@ -1,0 +1,14 @@
+artifact_uri: file:///mlruns/695521025052029989/cd51b53308ad41e1bd86cc5eda963432/artifacts
+end_time: 1766730638211
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: cd51b53308ad41e1bd86cc5eda963432
+run_name: righteous-vole-923
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766730623743
+status: 3
+tags: []
+user_id: sanap

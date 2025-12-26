@@ -25,55 +25,85 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         logging.info("Entered the data ingestion method or component")
         try:
-            # Generate synthetic Customer Churn data
-            logging.info("Generating synthetic Customer Churn data")
-            np.random.seed(42)
-            n_samples = 2000  # Increased samples for better coverage
+            external_data_path = os.path.join("data", "external_data.csv")
+            
+            if os.path.exists(external_data_path):
+                # --- Load External Data ---
+                logging.info(f"External dataset found at {external_data_path}. Loading...")
+                df = pd.read_csv(external_data_path)
+                
+                # Column Mapping (Improvising based on standard datasets)
+                column_mapping = {
+                    'CreditScore': 'credit_score',
+                    'Age': 'age',
+                    'Tenure': 'tenure',
+                    'Balance': 'balance',
+                    'NumOfProducts': 'products_number',
+                    'HasCrCard': 'credit_card',
+                    'IsActiveMember': 'active_member',
+                    'EstimatedSalary': 'estimated_salary',
+                    'Exited': 'churn'
+                }
+                df = df.rename(columns=column_mapping)
+                
+                # Verify required columns align with our training schema
+                required_cols = ['credit_score', 'age', 'tenure', 'balance', 
+                                 'products_number', 'credit_card', 'active_member', 
+                                 'estimated_salary', 'churn']
+                
+                if not all(col in df.columns for col in required_cols):
+                    missing = [col for col in required_cols if col not in df.columns]
+                    raise ValueError(f"External data missing required columns: {missing}")
 
-            data = {
-                "credit_score": np.random.randint(300, 850, n_samples),
-                "age": np.random.randint(18, 90, n_samples),
-                "tenure": np.random.randint(0, 10, n_samples),
-                "balance": np.random.uniform(0, 2500000, n_samples), # Increased max balance to 2.5M
-                "products_number": np.random.randint(1, 5, n_samples),
-                "credit_card": np.random.randint(0, 2, n_samples),
-                "active_member": np.random.randint(0, 2, n_samples),
-                "estimated_salary": np.random.uniform(10000, 2000000, n_samples), # Increased max salary to 2M
-                "product_price": np.random.uniform(10, 10000, n_samples), # Increased max product price
-            }
-            df = pd.DataFrame(data)
+                # Keep only relevant columns
+                df = df[required_cols]
+                
+                logging.info(f"Loaded {len(df)} rows from external dataset.")
 
-            # --- Probabilistic Churn Logic ---
-            # Instead of hard rules, we calculate a "Risk Score" (logits) and convert to probability.
-            
-            # Normalize features for risk calculation
-            age_norm = df["age"] / 100.0
-            # Affordability Ratio: Price vs Balance (Capped at 1.0)
-            balance_pressure = (df["product_price"] / (df["balance"] + 1.0)).clip(upper=1.0)
-            # Income Ratio: Price vs Monthly Salary (Capped at 1.0)
-            salary_pressure = (df["product_price"] / ((df["estimated_salary"] / 12) + 1.0)).clip(upper=1.0)
-            
-            # Calculate Log-Odds (Logits)
-            # Base risk bias
-            logits = -2.0 
-            
-            # Risk Increases (+):
-            logits += 3.5 * age_norm          # Older customers = Higher risk
-            logits += 2.0 * balance_pressure  # Low balance relative to price = High risk
-            logits += 1.5 * salary_pressure   # Low salary relative to price = High risk
-            
-            # Risk Decreases (-):
-            logits -= 1.5 * df["active_member"]       # Active members stay
-            logits -= 0.1 * df["tenure"]              # Loyal customers stay
-            logits -= 0.5 * df["credit_card"]         # Credit card creates slight lock-in
-            logits -= 0.5 * (df["products_number"] == 2).astype(int) # 2 products is often stable
-            
-            # Convert Logits to Probability (Sigmoid)
-            churn_prob = 1 / (1 + np.exp(-logits))
-            
-            # Generate Churn Label using Bernoulli Sampling
-            # This allows a "High Risk" user to sometimes stay (Realistic)
-            df["churn"] = np.random.binomial(n=1, p=churn_prob)
+            else:
+                # --- Fallback to Synthetic Data Generation ---
+                logging.info("External data not found. Generating synthetic Customer Churn data")
+                np.random.seed(42)
+                n_samples = 2000  # Increased samples for better coverage
+
+                data = {
+                    "credit_score": np.random.randint(300, 850, n_samples),
+                    "age": np.random.randint(18, 90, n_samples),
+                    "tenure": np.random.randint(0, 10, n_samples),
+                    "balance": np.random.uniform(0, 2500000, n_samples), # Increased max balance to 2.5M
+                    "products_number": np.random.randint(1, 5, n_samples),
+                    "credit_card": np.random.randint(0, 2, n_samples),
+                    "active_member": np.random.randint(0, 2, n_samples),
+                    "estimated_salary": np.random.uniform(10000, 2000000, n_samples), # Increased max salary to 2M
+                }
+                df = pd.DataFrame(data)
+
+                # --- Probabilistic Churn Logic ---
+                # Instead of hard rules, we calculate a "Risk Score" (logits) and convert to probability.
+                
+                # Normalize features for risk calculation
+                age_norm = df["age"] / 100.0
+                
+                # Calculate Log-Odds (Logits)
+                # Base risk bias
+                logits = -2.0 
+                
+                # Risk Increases (+):
+                logits += 3.5 * age_norm          # Older customers = Higher risk
+                # Removed price-based pressure metrics
+                
+                # Risk Decreases (-):
+                logits -= 1.5 * df["active_member"]       # Active members stay
+                logits -= 0.1 * df["tenure"]              # Loyal customers stay
+                logits -= 0.5 * df["credit_card"]         # Credit card creates slight lock-in
+                logits -= 0.5 * (df["products_number"] == 2).astype(int) # 2 products is often stable
+                
+                # Convert Logits to Probability (Sigmoid)
+                churn_prob = 1 / (1 + np.exp(-logits))
+                
+                # Generate Churn Label using Bernoulli Sampling
+                # This allows a "High Risk" user to sometimes stay (Realistic)
+                df["churn"] = np.random.binomial(n=1, p=churn_prob)
             
             # Save raw data
             os.makedirs(os.path.dirname(self.config.raw_data_path), exist_ok=True)

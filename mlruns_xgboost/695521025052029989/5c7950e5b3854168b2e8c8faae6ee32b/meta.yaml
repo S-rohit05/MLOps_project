@@ -1,0 +1,14 @@
+artifact_uri: file:///mlruns/695521025052029989/5c7950e5b3854168b2e8c8faae6ee32b/artifacts
+end_time: 1766730876398
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: 5c7950e5b3854168b2e8c8faae6ee32b
+run_name: grandiose-zebra-130
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766730872481
+status: 3
+tags: []
+user_id: sanap

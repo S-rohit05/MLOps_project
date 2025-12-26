@@ -1,0 +1,14 @@
+artifact_uri: file:///mlruns/695521025052029989/5bb8fa985d874cbe8de1114a1892212e/artifacts
+end_time: 1766730943909
+entry_point_name: ''
+experiment_id: '695521025052029989'
+lifecycle_stage: active
+run_id: 5bb8fa985d874cbe8de1114a1892212e
+run_name: casual-carp-949
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766730939916
+status: 3
+tags: []
+user_id: sanap

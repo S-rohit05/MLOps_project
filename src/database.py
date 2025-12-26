@@ -24,7 +24,6 @@ def init_db():
             credit_card INTEGER,
             active_member INTEGER,
             estimated_salary REAL,
-            product_price REAL,
             prediction INTEGER,
             churn_probability REAL
         )
@@ -44,8 +43,8 @@ def save_prediction(input_data: dict, prediction: int, churn_prob: float):
         INSERT INTO predictions (
             timestamp, credit_score, age, tenure, balance, 
             products_number, credit_card, active_member, estimated_salary, 
-            product_price, prediction, churn_probability
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            prediction, churn_probability
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         timestamp,
         input_data['credit_score'],
@@ -56,7 +55,6 @@ def save_prediction(input_data: dict, prediction: int, churn_prob: float):
         input_data['credit_card'],
         input_data['active_member'],
         input_data['estimated_salary'],
-        input_data['product_price'],
         prediction,
         churn_prob
     ))
