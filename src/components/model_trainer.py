@@ -10,6 +10,7 @@ import mlflow.sklearn
 import logging
 from dataclasses import dataclass
 import sys
+import pathlib
 
 # Basic logging setup
 logging.basicConfig(
@@ -51,8 +52,9 @@ class ModelTrainer:
             logging.info("Starting model training")
 
             # MLflow tracking
-            tracking_uri = "file:///" + os.path.abspath("mlruns_xgboost").replace("\\", "/")
-            mlflow.set_tracking_uri(tracking_uri)
+            uri = pathlib.Path("mlruns_xgboost").resolve().as_uri()
+            logging.info(f"Setting MLflow tracking URI to: {uri}")
+            mlflow.set_tracking_uri(uri)
             mlflow.set_experiment("CustomerChurnPrediction")
 
             with mlflow.start_run():
