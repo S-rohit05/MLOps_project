@@ -51,18 +51,18 @@ class ModelTrainer:
 
             logging.info("Starting model training")
 
-            # MLflow tracking
-            uri = pathlib.Path("mlruns_xgboost").resolve().as_uri()
+            # MLflow tracking - SAFE MODE
+            import tempfile
+            tracking_dir = tempfile.mkdtemp()
+            uri = pathlib.Path(tracking_dir).as_uri()
             mlflow.set_tracking_uri(uri)
             
             # Explicitly define artifact location to avoid permission errors
-            exp_name = "CustomerChurnPrediction"
-            artifact_uri = pathlib.Path("mlruns_artifacts").resolve().as_uri()
+            exp_name = "CustomerChurn_CI_Fixed"
             
             try:
-                mlflow.create_experiment(exp_name, artifact_location=artifact_uri)
+                mlflow.create_experiment(exp_name, artifact_location=uri)
             except mlflow.exceptions.MlflowException:
-                # Experiment may already exist
                 pass
 
             mlflow.set_experiment(exp_name)
