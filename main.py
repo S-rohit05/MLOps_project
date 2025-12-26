@@ -86,10 +86,29 @@ def predict(data: CustomerData):
         # Save to database
         save_prediction(data.dict(), int(prediction), float(churn_prob))
         
+        # --- Explainability Logic (Simple Heuristics) ---
+        factors = []
+        if df['age'].iloc[0] > 50:
+            factors.append("Senior Customer (>50)")
+        if df['active_member'].iloc[0] == 0:
+            factors.append("Inactive Member")
+        if df['balance'].iloc[0] == 0:
+            factors.append("Zero Balance")
+        if df['products_number'].iloc[0] >= 3:
+            factors.append("High Product Volatility")
+        if df['credit_score'].iloc[0] < 500:
+            factors.append("Low Credit Score")
+        
+        if not factors and churn_prob > 0.5:
+            factors.append("Complex Risk Pattern")
+        elif not factors and churn_prob <= 0.5:
+             factors.append("Strong Loyalty Indicators")
+
         return {
             "prediction": int(prediction[0]),
             "churn_probability": float(churn_prob),
-            "label": "Churn" if prediction[0] == 1 else "No Churn"
+            "label": "Churn" if prediction[0] == 1 else "No Churn",
+            "factors": factors
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

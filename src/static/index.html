@@ -4,267 +4,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Churn Predictor AI</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            width: 400px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #34495e;
-            font-weight: 600;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 1rem;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 1rem;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        #result {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: bold;
-            display: none;
-        }
-
-        .churn {
-            background-color: #ffebee;
-            color: #c62828;
-            border: 1px solid #ffcdd2;
-        }
-
-        .safe {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #c8e6c9;
-        }
-
-        .links {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 0.9em;
-        }
-
-        .links a {
-            color: #555;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-            color: #000;
-        }
-    </style>
+    <title>Churn Prediction Analytics</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
-    <div class="container">
-        <h1>🔮 Churn Predictor</h1>
-        <form id="predictForm">
-            <div class="form-group">
-                <label>Credit Score</label>
-                <input type="number" id="credit_score" value="650" required>
-            </div>
-            <div class="form-group">
-                <label>Age</label>
-                <input type="number" id="age" value="35" required>
-            </div>
-            <div class="form-group">
-                <label>Tenure (Years)</label>
-                <input type="number" id="tenure" value="5" required>
-            </div>
-            <div class="form-group">
-                <label>Balance ($)</label>
-                <input type="number" id="balance" value="50000" required>
-            </div>
-            <div class="form-group">
-                <label>Number of Products</label>
-                <input type="number" id="products_number" value="2" required>
-            </div>
-            <div class="form-group">
-                <label>Has Credit Card?</label>
-                <select id="credit_card">
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Is Active Member?</label>
-                <select id="active_member">
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Estimated Salary ($)</label>
-                <input type="number" id="estimated_salary" value="100000" required>
-            </div>
-            <button type="submit">Predict Churn Risk</button>
-        </form>
-        <div id="result"></div>
 
-        <div class="links">
-            <a href="/docs" target="_blank">API Docs</a> |
-            <a href="/monitoring" target="_blank">Drift Report</a>
+    <div class="dashboard">
+        <!-- Control Panel (Left) -->
+        <div class="card control-panel">
+            <h1>Customer Profile</h1>
+            <h2>Adjust metrics to simulate risk</h2>
+
+            <div class="control-group">
+                <label>Credit Score <span class="value-display" id="disp_credit_score">650</span></label>
+                <input type="range" id="credit_score" min="300" max="850" value="650">
+            </div>
+
+            <div class="control-group">
+                <label>Age <span class="value-display" id="disp_age">35</span></label>
+                <input type="range" id="age" min="18" max="92" value="35">
+            </div>
+
+            <div class="control-group">
+                <label>Tenure (Years) <span class="value-display" id="disp_tenure">5</span></label>
+                <input type="range" id="tenure" min="0" max="10" value="5">
+            </div>
+
+            <div class="control-group">
+                <label>Account Balance <span class="value-display" id="disp_balance">$50,000</span></label>
+                <input type="range" id="balance" min="0" max="250000" step="1000" value="50000">
+            </div>
+
+            <div class="control-group">
+                <label>Num of Products <span class="value-display" id="disp_products">1</span></label>
+                <input type="range" id="products_number" min="1" max="4" value="1">
+            </div>
+
+            <div class="control-group">
+                <label>Est. Salary <span class="value-display" id="disp_salary">$100,000</span></label>
+                <input type="range" id="estimated_salary" min="10000" max="200000" step="5000" value="100000">
+            </div>
+
+            <div class="toggle-group">
+                <button type="button" class="toggle-btn active" id="credit_card" data-value="1">Credit Card:
+                    YES</button>
+                <button type="button" class="toggle-btn active" id="active_member" data-value="1">Active Member:
+                    YES</button>
+            </div>
+
+            <button id="predict-btn" class="predict-btn">Update Risk Analysis</button>
         </div>
 
-        <div id="history-container" style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
-            <h3>Recent Predictions</h3>
-            <table id="history-table"
-                style="width: 100%; font-size: 0.9em; text-align: left; border-collapse: collapse;">
-                <thead>
-                    <tr style="border-bottom: 2px solid #ddd;">
-                        <th style="padding: 8px;">Time</th>
-                        <th style="padding: 8px;">Prob</th>
-                        <th style="padding: 8px;">Result</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- History rows will be here -->
-                </tbody>
-            </table>
+        <!-- Analytics HUD (Right) -->
+        <div class="card hud-container">
+            <div class="gauge-wrapper">
+                <div class="gauge-bg"></div>
+                <!-- Rotates from -135deg to 45deg -->
+                <div class="gauge-fill" id="gauge-fill"></div>
+            </div>
+
+            <div class="probability-text" id="prob-text">--%</div>
+            <div class="risk-label" id="risk-label">Analyzing...</div>
+
+            <div
+                style="margin-top: 2rem; color: #94a3b8; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 1px;">
+                Top Risk Factors
+            </div>
+            <div class="factors-list" id="factor-list">
+                <!-- Chips injected by JS -->
+            </div>
+
+            <div class="history-link" style="margin-top: auto; padding-top: 2rem;">
+                <a href="/monitoring" style="color: var(--accent); text-decoration: none;">View Drift Report &rarr;</a>
+            </div>
         </div>
     </div>
 
-    <script>
-        document.getElementById('predictForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const resultDiv = document.getElementById('result');
-
-            btn.textContent = 'Analyzing...';
-            btn.disabled = true;
-            resultDiv.style.display = 'none';
-
-            const data = {
-                credit_score: parseInt(document.getElementById('credit_score').value),
-                age: parseInt(document.getElementById('age').value),
-                tenure: parseInt(document.getElementById('tenure').value),
-                balance: parseFloat(document.getElementById('balance').value),
-                products_number: parseInt(document.getElementById('products_number').value),
-                credit_card: parseInt(document.getElementById('credit_card').value),
-                active_member: parseInt(document.getElementById('active_member').value),
-                estimated_salary: parseFloat(document.getElementById('estimated_salary').value)
-            };
-
-            try {
-                const response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                const res = await response.json();
-
-                resultDiv.style.display = 'block';
-                // Fix: Match the API key 'prediction'
-                if (res.prediction === 1) {
-                    resultDiv.textContent = '⚠️ High Risk: Customer likely to Churn';
-                    resultDiv.className = 'churn';
-                } else {
-                    resultDiv.textContent = '✅ Low Risk: Customer likely to Stay';
-                    resultDiv.className = 'safe';
-                }
-
-                // Update history
-                fetchHistory();
-            } catch (err) {
-                resultDiv.textContent = 'Error: Could not connect to API';
-                resultDiv.style.display = 'block';
-            } finally {
-                btn.textContent = 'Predict Churn Risk';
-                btn.disabled = false;
-            }
-        });
-
-        async function fetchHistory() {
-            try {
-                const res = await fetch('/history'); // Call the new endpoint
-                const history = await res.json();
-
-                const tbody = document.querySelector('#history-table tbody');
-                tbody.innerHTML = ''; // Clear existing rows
-
-                history.forEach(item => {
-                    const tr = document.createElement('tr');
-
-                    // Format timestamp
-                    const dateCtx = new Date(item.timestamp);
-                    const dateStr = dateCtx.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                    // Format probability
-                    const prob = (item.churn_probability * 100).toFixed(1) + '%';
-
-                    // Format result
-                    const isChurn = item.prediction === 1;
-                    const resultText = isChurn ? '🔴 Churn' : '🟢 Safe';
-                    const resultStyle = isChurn ? 'color: #c62828; font-weight: bold;' : 'color: #2e7d32; font-weight: bold;';
-
-                    tr.innerHTML = `
-                        <td style="padding: 8px; border-bottom: 1px solid #eee;">${dateStr}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee;">${prob}</td>
-                        <td style="padding: 8px; border-bottom: 1px solid #eee; ${resultStyle}">${resultText}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (err) {
-                console.error("Error fetching history:", err);
-            }
-        }
-
-        // Fetch history when page loads
-        fetchHistory();
-    </script>
+    <script src="/static/script.js"></script>
 </body>
 
 </html>
