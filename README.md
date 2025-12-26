@@ -1,65 +1,55 @@
-# End-to-End MLOps Project
+# Customer Churn Prediction MLOps
 
-This project implements a complete Machine Learning pipeline for **Customer Churn Prediction**.
+## 🌟 Overview
+A production-ready **MLOps** project for predicting customer churn.
+Includes:
+*   **Probabilistic XGBoost Model** (Recall: ~72%)
+*   **FAANG-Style Analytics Dashboard**
+*   **FastAPI** Backend with Explanations
+*   **CI/CD Pipeline** (check `.github/workflows`)
+*   **Dockerized Deployment**
 
-## Features
-- **Data Ingestion**: Synthetic data generation.
-- **Model Training**: Random Forest with MLflow tracking.
-- **API**: FastAPI for serving predictions.
-- **Docker**: Containerized application.
+## 🚀 Quick Start
+### 1. Run with Docker (Recommended)
+This will start the API, MLflow, and Dashboard.
+```bash
+docker-compose up --build
+```
+Access the dashboard at: `http://localhost:8000`
 
-## Setup
+### 2. Run Locally (Dev)
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-1. **Install Dependencies**
-   ```bash
-   python -m venv venv
-   .\venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
+# Train Model
+python src/components/data_ingestion.py
+python src/components/model_trainer.py
 
-2. **Run Pipeline**
-   ```bash
-   # Generate data
-   python src/components/data_ingestion.py
-   
-   # Train model
-   python src/components/model_trainer.py
-   ```
+# Run Server
+uvicorn main:app --reload
+```
 
-3. **Run API**
-   ```bash
-   uvicorn main:app --reload
-   ```
-   Visit `http://localhost:8000/docs` to test the API.
+## ☁️ Cloud Deployment
+### CI/CD Pipeline
+Every push to `main` triggers:
+1.  **Dependency Check**
+2.  **Model Retraining** (Reproducibility)
+3.  **Performance Guardrails** (Fails if F1-Score < 0.55)
 
-4. **Docker**
-   ```bash
-   docker build -t churn-api .
-   docker run -p 8000:8000 churn-api
-   ```
+### Deploying to Render/Railway/AWS
+1.  **Container**: The project is Docker-ready.
+2.  **Entrypoint**: Uses `gunicorn` for production performance.
+3.  **Port**: Exposes port `8000`.
 
-## Tools
-- **MLflow**: `mlflow ui` to view experiments.
-- **DVC**: `dvc repro` to run the pipeline.
+## 🧪 Testing
+Run the model quality gate:
+```bash
+pytest tests/test_model_performance.py
+```
 
-## Quick Start (Windows)
-
-To run the project on your PC:
-
-1. **Activate Environment**
-   ```powershell
-   .\venv\Scripts\activate
-   ```
-
-2. **Run API** (in one terminal)
-   ```powershell
-   uvicorn main:app --reload
-   ```
-   Open http://localhost:8000/docs to test predictions.
-
-3. **Run MLflow UI** (in another terminal)
-   ```powershell
-   python -m mlflow ui
-   ```
-   Open http://localhost:5000 to view experiments.
-
+## 📊 Project Structure
+*   `src/`: Application source code
+*   `model/`: Saved artifacts
+*   `tests/`: CI/CD guardrails
+*   `.github/`: Automation workflows
