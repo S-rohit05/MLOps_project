@@ -51,7 +51,8 @@ class ModelTrainer:
             logging.info("Starting model training")
 
             # MLflow tracking
-            mlflow.set_tracking_uri("file:./mlruns_xgboost")
+            tracking_uri = "file:///" + os.path.abspath("mlruns_xgboost").replace("\\", "/")
+            mlflow.set_tracking_uri(tracking_uri)
             mlflow.set_experiment("CustomerChurnPrediction")
 
             with mlflow.start_run():
